@@ -10,64 +10,62 @@ fs.readFile(process.argv[2], 'utf8', function (err,bot_token) {
 	var rtm = new RtmClient(bot_token.trim());
 
 	rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
-		if(message.type == 'message' && message.hasOwnProperty('text') && message.text.indexOf("[[") != -1 && message.text.indexOf("]]") != -1)
+		if(message.type == 'message' && message.hasOwnProperty('text'))
 		{
-			console.log("i'm matching " + message.text);
-			var matches = message.text.match(/\[\[[\w ,\-']+\]\]/gi);
-			console.log(matches);
-
-			if (matches == null)
+			if ((matches = message.text.match(/\[\[[\w ,\-']+\]\]/gi)) != null)
 			{
-				matches = '';
-			}
-
-			for (var f = 0, matchesLen = matches.length; f < matchesLen; f++)
-			{
-				var left = matches[f].search("\\[\\[") + 2;
-				var right = matches[f].search("\\]\\]");
-				var res = matches[f].slice(left, right);
-
-				if (res.indexOf("//") > 0)
+				for (var f = 0, matchesLen = matches.length; f < matchesLen; f++)
 				{
-					res = "\"" + res.slice(0, res.indexOf("//")).trim() + "\"";
-				}	
+					var left = matches[f].search("\\[\\[") + 2;
+					var right = matches[f].search("\\]\\]");
+					var res = matches[f].slice(left, right);
 
-				res = res.replace("’", "%27");
-
-				if(res == "Slambo" || res == "slambo")
-				{
-					var t = Date.now();
-					console.log(t);
-
-					if(t % 2 == 0)
+					if (res.indexOf("//") > 0)
 					{
-						url = "http://i.imgur.com/4vFIe9d.jpg";
-					}
-					else
-					{
-						url = "http://i.imgur.com/kZyW3EP.png";
-					}
+						res = "\"" + res.slice(0, res.indexOf("//")).trim() + "\"";
+					}	
 
-					rtm.sendMessage(url, message.channel);
-				}
+					res = res.replace("’", "%27");
 
-				mtg.card.where({name: res}).then(
-					function(cards)
+					if(res == "Slambo" || res == "slambo")
 					{
-						if (typeof cards != 'undefined')
+						var t = Date.now();
+						console.log(t);
+
+						if(t % 2 == 0)
 						{
-							for (var i = 0, len = cards.length; i < len; i++)
+							url = "http://i.imgur.com/4vFIe9d.jpg";
+						}
+						else
+						{
+							url = "http://i.imgur.com/kZyW3EP.png";
+						}
+
+						rtm.sendMessage(url, message.channel);
+					}
+
+					mtg.card.where({name: res}).then(
+						function(cards)
+						{
+							if (typeof cards != 'undefined')
 							{
-								console.log(cards[i].name);
-								if (typeof cards[i].imageUrl != 'undefined' && cards[i].set != 'VAN')
+								for (var i = 0, len = cards.length; i < len; i++)
 								{
-									rtm.sendMessage(cards[i].imageUrl, message.channel);
-									break;
+									console.log(cards[i].name);
+									if (typeof cards[i].imageUrl != 'undefined' && cards[i].set != 'VAN')
+									{
+										rtm.sendMessage(cards[i].imageUrl, message.channel);
+										break;
+									}
 								}
 							}
 						}
-					}
-				);
+					);
+				}
+			}
+			else if (message.text.match(/i'?m bored/gi) != null)
+			{
+				rtm.sendMessage("Hi Bored!  I'm mtgbot!", message.channel);
 			}
 		}
 	});
