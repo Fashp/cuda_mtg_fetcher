@@ -39,7 +39,7 @@ fs.readFile(process.argv[2], 'utf8', function (err,bot_token) {
 						{
 							case 0:  url = "http://i.imgur.com/4vFIe9d.jpg"; break;
 							case 1:  url = "http://i.imgur.com/kZyW3EP.png"; break;
-							case 2:  url = "http://i.imgur.com/ytr7eNB.png"; break;
+							case 2:  url = "https://i.imgur.com/WcpiftW.png"; break;
 							default: url = "https://ca.slack-edge.com/T50SNSNF6-U51KKUB0W-480e24985283-512"
 						}
 
