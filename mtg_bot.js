@@ -16,7 +16,7 @@ fs.readFile(process.argv[2], 'utf8', function (err,bot_token) {
 		if(message.type == 'message' && message.hasOwnProperty('text'))
 		{
 			//Matches any MtG card name between [[brackets]]
-			if ((matches = message.text.match(/\[\[[\w ,.!?:\-\(\)']+\]\]/gi)) != null)
+			if ((matches = message.text.match(/\[\[[\w ,.!?:\-\(\)\/']+\]\]/gi)) != null)
 			{
 				for (var f = 0, matchesLen = matches.length; f < matchesLen; f++)
 				{
@@ -76,15 +76,34 @@ fs.readFile(process.argv[2], 'utf8', function (err,bot_token) {
 									{
 										if (typeof cards != 'undefined')
 										{
+											var foundACard = -1;
+
 											// We currently have no way of determining what card the user actually wants in this case. So just pick one...
 											for (var i = 0, len = cards.length; i < len; i++)
 											{
+												console.log(cards[i].name + "  -  " + cards[i].supertypes + "  -  " + cards[i].types + "  -  " + cards[i].set + "  -  " + cards[i].imageUrl)
+												
 												// As long as it isn't from Vanguard, apparently. This should probably check for card types.
-												if (cards[i].set != 'VAN')
+												// I'm now also making it exclude masterpieces, since those tend to be hard to read cough cough invocations.
+												if (cards[i].set != 'VAN' && !cards[i].set.includes('MPS'))
 												{
-													rtm.sendMessage(cards[i].imageUrl, message.channel);
-													return;
+													// The algorithm biases towards Legendaries, because those are more likely to be what the user is referring to. 
+													// Especially when they just use the proper name, without a descriptor. This will need refinement.
+													if (cards[i].supertypes == 'Legendary')
+													{
+														rtm.sendMessage(cards[i].imageUrl, message.channel);
+														return;
+													}
+													else if (foundACard == -1)
+													{
+														foundACard = i;
+													}
 												}
+											}
+
+											if (foundACard != -1)
+											{
+												rtm.sendMessage(cards[foundACard].imageUrl, message.channel);
 											}
 										}
 									}
