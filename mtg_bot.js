@@ -89,7 +89,7 @@ fs.readFile(process.argv[2], 'utf8', function (err,bot_token) {
 												
 												// As long as it isn't from Vanguard, apparently. This should probably check for card types.
 												// I'm now also making it exclude masterpieces, since those tend to be hard to read cough cough invocations.
-												if (cards[i].set != 'VAN' && !cards[i].set.includes('MPS'))
+												if (cards[i].set != 'VAN' && cards[i].set != 'MPS')
 												{
 													// The algorithm biases towards Legendaries, because those are more likely to be what the user is referring to. 
 													// Especially when they just use the proper name, without a descriptor. This will need refinement.
